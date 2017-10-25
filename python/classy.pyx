@@ -819,6 +819,82 @@ cdef class Class:
 
         return H
 
+    def Omega0_scf(self):
+        """
+        Omega0_scf
+
+        Return the Omega0_scf variable defined un class as np.exp(pvecback[self.ba.index_bg_Omega_phi_scf])
+
+        """
+        cdef double tau,z=0.
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+        if background_tau_of_z(&self.ba,z,&tau)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        omega0scf= np.exp(pvecback[self.ba.index_bg_Omega_phi_scf])
+
+        free(pvecback)
+
+        return omega0scf
+
+
+
+    def y_phi(self):
+        """
+        y_phi 
+        Return the y_phi variable in CLASS code defined by CLASS as index_bg_y_phi in the background model
+        no parametrs required
+        """
+        cdef double tau,z=0.
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+        if background_tau_of_z(&self.ba,z,&tau)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        yphi=pvecback[self.ba.index_bg_y_phi_scf]
+
+        free(pvecback)
+        return yphi
+
+
+
+
+
+    def w_phi(self):
+        """
+        Return the w_phi variable for the Quint field defined in class as -np.cos(pvecback[self.ba.index_bg_theta_phi_scf])
+
+        """
+        cdef double tau,z=0.
+        cdef int last_index #junk
+        cdef double * pvecback
+
+        pvecback = <double*> calloc(self.ba.bg_size,sizeof(double))
+
+        if background_tau_of_z(&self.ba,z,&tau)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
+            raise CosmoSevereError(self.ba.error_message)
+
+        wphi= -np.cos(pvecback[self.ba.index_bg_theta_phi_scf])
+
+        free(pvecback)
+
+        return wphi
     def ionization_fraction(self, z):
         """
         ionization_fraction(z)
@@ -1341,6 +1417,12 @@ cdef class Class:
                 value = self.sp.alpha_RR_2_2500
             elif name == 'sigma8':
                 value = self.sp.sigma8
+            elif name== 'Omega0_scf':
+                value=self.Omega0_scf()
+            elif name== 'w_phi':
+                value=self.w_phi()
+            elif name== 'y_phi':
+                value=self.y_phi()
             else:
                 raise CosmoSevereError("%s was not recognized as a derived parameter" % name)
             derived[name] = value

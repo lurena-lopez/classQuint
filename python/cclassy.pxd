@@ -54,7 +54,9 @@ cdef extern from "class.h":
         double w0_fld
         double wa_fld
         double cs2_fld
-
+        int index_bg_Omega_phi_scf
+        int index_bg_theta_phi_scf
+        int index_bg_y_phi_scf
         int bt_size
 
     cdef struct thermo:
