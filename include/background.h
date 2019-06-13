@@ -482,6 +482,12 @@ extern "C" {
 		    double theta,
 		    double y1_phi
 		    );
+    
+  double y2p_phi_scf(struct background *pba,
+                      double Omega_phi,
+                      double theta,
+                      double y1_phi
+            );
 
   /** Coupling between scalar field and matter **/
 /**  double Q_scf(
