@@ -517,8 +517,6 @@ int input_read_parameters(
   double param1,param2,param3;
   int N_ncdm=0,n,entries_read;
   int int1,fileentries;
-  //double theta_ini,Omega_ini;
-  //double aosc;
   double fnu_factor;
   double * pointer1;
   char string1[_ARGUMENT_LENGTH_MAX_];
@@ -1012,10 +1010,11 @@ int input_read_parameters(
     class_read_double("scf_shooting_parameter",pba->scf_parameters[pba->scf_tuning_index]);
 
     /** - Initial conditions for scalar field variables */
-        //printf(" -> Shooting = %1.2e\n",pba->scf_parameters[pba->scf_tuning_index]);
-        //printf(" -> Shooting1 = %1.2e\n",pba->scf_parameters[pba->scf_tuning_index+1]);
-        pba->Omega_phi_ini_scf = pba->scf_parameters[pba->scf_tuning_index]+log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur));
-        pba->theta_phi_ini_scf = 0.;//(4./9.)*1.e-28*pow(2.*(1-cos(pba->scf_parameters[0]))*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur),0.5);
+        pba->Omega_phi_ini_scf = pba->scf_parameters[pba->scf_tuning_index]+
+        log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur));
+        pow((pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur),0.5);
+        pba->theta_phi_ini_scf = 0.;
+        //(4./9.)*1.e-28*pow(2.*(1.-0.*cos(pba->scf_parameters[0]))*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur),0.5);
 
     /** The initial condition for y1_phi_ini corresponds, or not, to the attractor value */
     class_call(parser_read_string(pfc,
@@ -1029,9 +1028,7 @@ int input_read_parameters(
     if (flag1 == _TRUE_){
       if((strstr(string1,"y") != NULL) || (strstr(string1,"Y") != NULL)){
         pba->attractor_ic_scf = _TRUE_;
-        pba->y_phi_ini_scf = pba->scf_parameters[0]*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
-          //5.*pba->theta_phi_ini_scf;
-          //(20./9.)*1.e-28*pba->scf_parameters[0]*pow((pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur),0.5);
+          pba->y_phi_ini_scf = pba->scf_parameters[0]*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
         }
       else{
         pba->attractor_ic_scf = _FALSE_;
