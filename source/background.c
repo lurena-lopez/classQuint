@@ -1658,7 +1658,7 @@ int background_solve(
                -cos(pvecback[pba->index_bg_theta_phi_scf]), 1.-cos(pvecback[pba->index_bg_theta_phi_scf]));
       printf(" -> y1_scf = %5.4e [1/Mpc], %5.4e [eV], %5.4e [H_0]\n",
              pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H],
-             2.*3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], pvecback[pba->index_bg_y_phi_scf]);
+             3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], pvecback[pba->index_bg_y_phi_scf]);
       //  printf(" -> wished = %1.2e [eV]\n",
       //         pba->scf_parameters[1]);
     }
@@ -2057,6 +2057,7 @@ int background_derivs(
       (1.5*(1.+pvecback[pba->index_bg_w_tot])*y[pba->index_bi_y_phi_scf]
        + y2_phi_scf(pba,y[pba->index_bi_Omega_phi_scf],y[pba->index_bi_theta_phi_scf],y[pba->index_bi_y_phi_scf]));
 //       exp(0.5*y[pba->index_bi_Omega_phi_scf])*sin_scf(pba,0.5*y[pba->index_bi_theta_phi_scf]));
+              //+pba->scf_parameters[3]*tan(0.5*y[pba->index_bi_theta_phi_scf])*pow(y[pba->index_bi_y_phi_scf],2.));
   }
 
 
@@ -2097,9 +2098,15 @@ double y2_phi_scf(struct background *pba,
   double scf_alpha1 = pba->scf_parameters[2];
   double scf_alpha2 = pba->scf_parameters[3];
   //General expression for quintessence potentials
-  return  0.5*scf_alpha0*exp(Omega_phi)*sin_scf(pba,theta) +
-    scf_alpha1*exp(0.5*Omega_phi)*sin_scf(pba,0.5*theta)*y1_phi +
-    scf_alpha2*tan(0.5*theta)*pow(y1_phi,2.);
+    if (fabs(cos(theta)) > 1.e-3){
+        return 0.5*scf_alpha0*exp(Omega_phi)*sin_scf(pba,theta) +
+        scf_alpha1*exp(0.5*Omega_phi)*sin_scf(pba,0.5*theta)*y1_phi +
+        scf_alpha2*sin_scf(pba,0.5*theta)*pow(y1_phi,2.)/cos_scf(pba,0.5*theta);
+    }
+    else{
+        return 0.5*scf_alpha0*exp(Omega_phi)*sin_scf(pba,theta) +
+        scf_alpha1*exp(0.5*Omega_phi)*sin_scf(pba,0.5*theta)*y1_phi;
+    }
 }
 
 double y2p_phi_scf(struct background *pba,

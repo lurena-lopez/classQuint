@@ -517,6 +517,7 @@ int input_read_parameters(
   double param1,param2,param3;
   int N_ncdm=0,n,entries_read;
   int int1,fileentries;
+    double masstohubble_ini, aosc;
   double fnu_factor;
   double * pointer1;
   char string1[_ARGUMENT_LENGTH_MAX_];
@@ -1010,9 +1011,14 @@ int input_read_parameters(
     class_read_double("scf_shooting_parameter",pba->scf_parameters[pba->scf_tuning_index]);
 
     /** - Initial conditions for scalar field variables */
+        masstohubble_ini = 15.64*pow(10.,pba->scf_parameters[0])/(pow(pba->Omega0_g+pba->Omega0_ur,0.5)*pba->H0);
+        /** - Calculate pivot value of Omega_ini for the calculation of appropriate initial conditions */
+        aosc = pow(1.25*_PI_/(masstohubble_ini*pow(1.+pow(_PI_,2)/36.,0.5)),0.5);
+        //printf(" -> a_osc = %1.2e\n",aosc);
         pba->Omega_phi_ini_scf = pba->scf_parameters[pba->scf_tuning_index]+
         log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur));
-        pow((pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur),0.5);
+        //log(pba->Omega0_scf*1.e-14/(pow(aosc,3.)*(pba->Omega0_g+pba->Omega0_ur)));
+        //printf(" -> Omega_ini = %1.2e\n",exp(pba->Omega_phi_ini_scf));
         pba->theta_phi_ini_scf = 0.;
         //(4./9.)*1.e-28*pow(2.*(1.-0.*cos(pba->scf_parameters[0]))*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur),0.5);
 
@@ -1028,7 +1034,8 @@ int input_read_parameters(
     if (flag1 == _TRUE_){
       if((strstr(string1,"y") != NULL) || (strstr(string1,"Y") != NULL)){
         pba->attractor_ic_scf = _TRUE_;
-          pba->y_phi_ini_scf = pba->scf_parameters[0]*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
+          pba->y_phi_ini_scf = pba->scf_parameters[0]*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5); //2.*masstohubble_ini; //
+          //printf(" -> y1_ini = %1.2e\n",pba->y_phi_ini_scf);
         }
       else{
         pba->attractor_ic_scf = _FALSE_;
