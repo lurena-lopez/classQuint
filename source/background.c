@@ -1656,7 +1656,7 @@ int background_solve(
 	     exp(pvecback[pba->index_bg_Omega_phi_scf]), pba->Omega0_scf);
       printf(" -> w_phi = %1.2e, 1+w_phi =%1.2e\n",
                -cos(pvecback[pba->index_bg_theta_phi_scf]), 1.-cos(pvecback[pba->index_bg_theta_phi_scf]));
-      printf(" -> y1_scf = %5.4e [1/Mpc], %5.4e [eV], %5.4e [H_0]\n",
+      printf(" -> H_0 y1_scf = %5.4e [1/Mpc], %5.4e [eV], %5.4e [H_0]\n",
              pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H],
              3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], pvecback[pba->index_bg_y_phi_scf]);
       //  printf(" -> wished = %1.2e [eV]\n",
