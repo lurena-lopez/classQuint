@@ -7249,7 +7249,7 @@ int perturb_derivs(double tau,
         
         dy[pv->index_pt_delta1_scf] = -a_prime_over_a*((3.*cos_scf(pba,theta_phi_scf)+omega_scf*sin_scf(pba,theta_phi_scf)
         -y2_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*delta1_scf-(omega_scf*(1.+cos_scf(pba,theta_phi_scf))
-                                                       +y2p_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*delta0_scf)
+                                                       -y2p_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*delta0_scf)
                                                        -metric_continuity*sin_scf(pba,theta_phi_scf); //metric_continuity = h'/2
     }
 
