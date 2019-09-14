@@ -1026,7 +1026,7 @@ int input_read_parameters(
     if (flag1 == _TRUE_){
       if((strstr(string1,"y") != NULL) || (strstr(string1,"Y") != NULL)){
         pba->attractor_ic_scf = _TRUE_;
-          pba->theta_phi_ini_scf = 0.;//0.2*pba->y_phi_ini_scf;
+          pba->theta_phi_ini_scf = -3.13;//0.2*pba->y_phi_ini_scf;
           //pba->y_phi_ini_scf = pow(10.,pba->scf_parameters[0])*1.e-28*pow(pba->Omega0_cdm+pba->Omega0_b,0.5)/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
         }
       else{
