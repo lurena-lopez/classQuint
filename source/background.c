@@ -2107,16 +2107,3 @@ double y2_phi_scf(struct background *pba,
         scf_alpha1*exp(0.5*Omega_phi)*sin_scf(pba,0.5*theta)*y1_phi;
     }
 }
-
-double y2p_phi_scf(struct background *pba,
-                  double Omega_phi,
-                  double theta,
-                  double y1_phi
-                  ) {
-    double scf_alpha0 = pba->scf_parameters[1];
-    double scf_alpha1 = pba->scf_parameters[2];
-    double scf_alpha2 = pba->scf_parameters[3];
-    //General expression for quintessence potentials
-    return scf_alpha0*exp(Omega_phi)*cos_scf(pba,0.5*theta)/y1_phi +
-    scf_alpha1*exp(0.5*Omega_phi) + scf_alpha2*y1_phi/cos_scf(pba,0.5*theta);
-}
