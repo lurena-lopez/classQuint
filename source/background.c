@@ -1656,11 +1656,10 @@ int background_solve(
 	     exp(pvecback[pba->index_bg_Omega_phi_scf]), pba->Omega0_scf);
       printf(" -> w_phi = %1.2e, 1+w_phi =%1.2e\n",
                -cos(pvecback[pba->index_bg_theta_phi_scf]), 1.-cos(pvecback[pba->index_bg_theta_phi_scf]));
-      printf(" -> H_0 y1_scf = %5.4e [1/Mpc], %5.4e [eV], %5.4e [H_0]\n",
-             pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H],
-             3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], pvecback[pba->index_bg_y_phi_scf]);
-      //  printf(" -> wished = %1.2e [eV]\n",
-      //         pba->scf_parameters[1]);
+      printf(" -> y1_scf = %5.4e, wished = %5.4e\n",
+             pvecback[pba->index_bg_y_phi_scf],pba->scf_parameters[0]);
+      printf(" -> Mass_sfdm = %1.2e [eV], %1.2e [1/Mpc], %1.2e [H_0]\n",
+      3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]);
     }
     if(pba->has_lambda == _TRUE_){
       printf(" Lambda details:\n");
@@ -2118,6 +2117,6 @@ double y2p_phi_scf(struct background *pba,
     double scf_alpha1 = pba->scf_parameters[2];
     double scf_alpha2 = pba->scf_parameters[3];
     //General expression for quintessence potentials
-    return 0.5*scf_alpha0*exp(Omega_phi)*(1.+cos_scf(pba,theta)) +
-    scf_alpha1*exp(0.5*Omega_phi)*cos_scf(pba,0.5*theta)*y1_phi + scf_alpha2*pow(y1_phi,2.);
+    return scf_alpha0*exp(Omega_phi)*cos_scf(pba,0.5*theta)/y1_phi +
+    scf_alpha1*exp(0.5*Omega_phi) + scf_alpha2*y1_phi/cos_scf(pba,0.5*theta);
 }

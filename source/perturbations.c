@@ -4210,12 +4210,12 @@ int perturb_initial_conditions(struct precision * ppr,
           y1_phi = ppw->pvecback[pba->index_bg_y_phi_scf];
           
           /** Initial conditions in new formalism. Notice that by definition: omega=k^2/(H^2 y1) */
-          ppw->pv->y[ppw->pv->index_pt_omega_scf] = k*k/(pow(a*ppw->pvecback[pba->index_bg_H],2.)*y1_phi);
+          ppw->pv->y[ppw->pv->index_pt_omega_scf] = 0.;//k*k/(pow(a*ppw->pvecback[pba->index_bg_H],2.)*y1_phi);
           
           /** Canonical field (solving for the perturbations):
            Attractor solution around the critical point of the perturbation equations */
-          ppw->pv->y[ppw->pv->index_pt_delta0_scf] = (3./7.)*ppw->pv->y[ppw->pv->index_pt_delta_g]*sin(0.5*theta_phi)*sin(theta_phi/12.);
-          ppw->pv->y[ppw->pv->index_pt_delta1_scf] = (3./7.)*ppw->pv->y[ppw->pv->index_pt_delta_g]*sin(0.5*theta_phi)*cos(theta_phi/12.);
+          ppw->pv->y[ppw->pv->index_pt_delta0_scf] = 0.;//(3./7.)*ppw->pv->y[ppw->pv->index_pt_delta_g]*sin(0.5*theta_phi)*sin(theta_phi/12.);
+          ppw->pv->y[ppw->pv->index_pt_delta1_scf] = 0.;//(3./7.)*ppw->pv->y[ppw->pv->index_pt_delta_g]*sin(0.5*theta_phi)*cos(theta_phi/12.);
       }
       
       /* all relativistic relics: ur, early ncdm, dr */
@@ -7235,22 +7235,25 @@ int perturb_derivs(double tau,
       theta_phi_scf = pvecback[pba->index_bg_theta_phi_scf];
       y1_phi_scf = pvecback[pba->index_bg_y_phi_scf];
       omega_scf = k2/(pow(a*ppw->pvecback[pba->index_bg_H],2.)*y1_phi_scf);//y[pv->index_pt_omega_scf];
+        if (omega_scf > 1.e9) {
+            omega_scf = 1.e9;
+        }
       delta0_scf = y[pv->index_pt_delta0_scf];
       delta1_scf = y[pv->index_pt_delta1_scf];
       
       /** ---> Equations of motion for omega */
-        dy[pv->index_pt_omega_scf] = a_prime_over_a*(1.5*pvecback[pba->index_bg_w_tot]-0.5-
-                                                     y2_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*y[pv->index_pt_omega_scf];
+        dy[pv->index_pt_omega_scf] = 0.;//a_prime_over_a*(1.5*pvecback[pba->index_bg_w_tot]-0.5-
+                                                     //y2_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*y[pv->index_pt_omega_scf];
       
     /** ---> Equations of motion for the density contrasts */
-        dy[pv->index_pt_delta0_scf] = -a_prime_over_a*((3.*sin_scf(pba,theta_phi_scf)+omega_scf*(1.-cos_scf(pba,theta_phi_scf)))*delta1_scf
+        dy[pv->index_pt_delta0_scf] =-a_prime_over_a*((3.*sin_scf(pba,theta_phi_scf)+omega_scf*(1.-cos_scf(pba,theta_phi_scf)))*delta1_scf
                                                        -omega_scf*sin_scf(pba,theta_phi_scf)*delta0_scf)
                                                        -metric_continuity*(1.-cos_scf(pba,theta_phi_scf)); //metric_continuity = h'/2
         
-        dy[pv->index_pt_delta1_scf] = -a_prime_over_a*((3.*cos_scf(pba,theta_phi_scf)+omega_scf*sin_scf(pba,theta_phi_scf)
-        -y2_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*delta1_scf-(omega_scf*(1.+cos_scf(pba,theta_phi_scf))
-                                                       -y2p_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)/y1_phi_scf)*delta0_scf)
-                                                       -metric_continuity*sin_scf(pba,theta_phi_scf); //metric_continuity = h'/2
+        dy[pv->index_pt_delta1_scf] =-a_prime_over_a*(3.*cos_scf(pba,theta_phi_scf)*delta1_scf+
+                                                        omega_scf*(delta1_scf*sin_scf(pba,theta_phi_scf)-(1.+cos_scf(pba,theta_phi_scf))*delta0_scf)-
+                                                        y2p_phi_scf(pba,Omega_phi_scf,theta_phi_scf,y1_phi_scf)*
+                                                        (delta1_scf*sin_scf(pba,0.5*theta_phi_scf)-cos_scf(pba,0.5*theta_phi_scf)*delta0_scf)) -metric_continuity*sin_scf(pba,theta_phi_scf); //metric_continuity = h'/2
     }
 
     /** - ---> ultra-relativistic neutrino/relics (ur) */
