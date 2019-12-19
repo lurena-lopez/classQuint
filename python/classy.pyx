@@ -844,8 +844,6 @@ cdef class Class:
 
         return omega0scf
 
-
-
     def y_phi(self):
         """
         y_phi 
@@ -869,13 +867,10 @@ cdef class Class:
         free(pvecback)
         return yphi
 
-
-
-
-
-    def w_phi(self):
+    def theta_phi(self):
         """
-        Return the w_phi variable for the Quint field defined in class as -np.cos(pvecback[self.ba.index_bg_theta_phi_scf])
+	theta_phi
+        Return the theta_phi variable for the Quint field defined in class as pvecback[self.ba.index_bg_theta_phi_scf]
 
         """
         cdef double tau,z=0.
@@ -890,11 +885,12 @@ cdef class Class:
         if background_at_tau(&self.ba,tau,self.ba.long_info,self.ba.inter_normal,&last_index,pvecback)==_FAILURE_:
             raise CosmoSevereError(self.ba.error_message)
 
-        wphi= -np.cos(pvecback[self.ba.index_bg_theta_phi_scf])
+        theta_phi= pvecback[self.ba.index_bg_theta_phi_scf]
 
         free(pvecback)
 
-        return wphi
+        return theta_phi
+
     def ionization_fraction(self, z):
         """
         ionization_fraction(z)
@@ -1419,8 +1415,8 @@ cdef class Class:
                 value = self.sp.sigma8
             elif name== 'Omega0_scf':
                 value=self.Omega0_scf()
-            elif name== 'w_phi':
-                value=self.w_phi()
+            elif name== 'theta_phi':
+                value=self.theta_phi()
             elif name== 'y_phi':
                 value=self.y_phi()
             else:
