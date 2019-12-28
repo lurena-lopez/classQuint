@@ -1657,7 +1657,7 @@ int background_solve(
       printf(" -> w_phi = %1.2e, 1+w_phi =%1.2e\n",
                -cos(pvecback[pba->index_bg_theta_phi_scf]), 1.-cos(pvecback[pba->index_bg_theta_phi_scf]));
       printf(" -> y1_scf = %5.4e, wished = %5.4e\n",
-             pvecback[pba->index_bg_y_phi_scf],pba->scf_parameters[0]);
+             pvecback[pba->index_bg_y_phi_scf],pow(10.,pba->scf_parameters[0]));
       printf(" -> Mass_sfdm = %1.2e [eV], %1.2e [1/Mpc], %1.2e [H_0]\n",
       3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]);
     }
