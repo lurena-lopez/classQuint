@@ -1010,11 +1010,12 @@ int input_read_parameters(
     class_read_double("scf_shooting_parameter",pba->scf_parameters[pba->scf_tuning_index]);
 
     /** - Initial conditions for scalar field variables */
-        if ((pba->scf_parameters[3] < -0.6) && (pba->scf_parameters[3] > -20.)){
+        //if ((pba->scf_parameters[3] < -0.35) && (pba->scf_parameters[3] > -20.)){
+        if (pba->scf_parameters[3] < -0.35){
             pba->Omega_phi_ini_scf = pow(10.,pba->scf_parameters[pba->scf_tuning_index])+
             log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur))+
             0.5*log(1.e-56*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur))/pba->scf_parameters[3];
-            pba->theta_phi_ini_scf = 2.*asin(pow(-1./(3.*pba->scf_parameters[3]),0.5));
+            pba->theta_phi_ini_scf = acos(1.+2./(3.*pba->scf_parameters[3])); //2.*asin(pow(-1./(3.*pba->scf_parameters[3]),0.5));
             pba->y_phi_ini_scf = 3.*sin(pba->theta_phi_ini_scf);
         }
         else{
