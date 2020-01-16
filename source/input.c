@@ -1021,8 +1021,9 @@ int input_read_parameters(
         else{
             pba->Omega_phi_ini_scf = pba->scf_parameters[pba->scf_tuning_index]+
             log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur));
-            pba->theta_phi_ini_scf = 0.;//0.2*pba->scf_parameters[0]*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
-            pba->y_phi_ini_scf = pow(10.,pba->scf_parameters[0])*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
+            pba->theta_phi_ini_scf = 0.9*1.e-28*pow(pba->Omega0_scf/(pba->Omega0_g+pba->Omega0_ur),0.5)*pba->scf_parameters[0]
+            /pow(1+3.*pow(pba->scf_parameters[0],2.0)/8.,0.5);
+            pba->y_phi_ini_scf = 5.*pba->theta_phi_ini_scf;//pow(10.,pba->scf_parameters[0])*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
         }
 
     /** The initial condition for y1_phi_ini corresponds, or not, to the attractor value */
