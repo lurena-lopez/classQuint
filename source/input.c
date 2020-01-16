@@ -517,6 +517,7 @@ int input_read_parameters(
   double param1,param2,param3;
   int N_ncdm=0,n,entries_read;
   int int1,fileentries;
+  double theta0_phi,k1_phi=3.,k2_phi=0.,k3_phi=0.25;
   double fnu_factor;
   double * pointer1;
   char string1[_ARGUMENT_LENGTH_MAX_];
@@ -1019,10 +1020,12 @@ int input_read_parameters(
             pba->y_phi_ini_scf = 3.*sin(pba->theta_phi_ini_scf);
         }
         else{
+            k1_phi = 1.5
+            theta0_phi = pow(10.,pba->scf_parameters[0]);
             pba->Omega_phi_ini_scf = pba->scf_parameters[pba->scf_tuning_index]+
             log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur));
-            pba->theta_phi_ini_scf = 0.9*1.e-28*pow(pba->Omega0_scf/(pba->Omega0_g+pba->Omega0_ur),0.5)*pba->scf_parameters[0]
-            /pow(1+3.*pow(pba->scf_parameters[0],2.0)/8.,0.5);
+            pba->theta_phi_ini_scf = 0.9*1.e-28*pow(pba->Omega0_scf/(pba->Omega0_g+pba->Omega0_ur),0.5)*theta0_phi
+            /pow(1.+(2.*k3_phi+1.)*log(pba->Omega0_scf/(pba->Omega0_cdm+pba->Omega0_b))*pow(theta0_phi,2.0)/3.,0.5);
             pba->y_phi_ini_scf = 5.*pba->theta_phi_ini_scf;//pow(10.,pba->scf_parameters[0])*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
         }
 
