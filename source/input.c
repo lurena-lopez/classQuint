@@ -1020,12 +1020,18 @@ int input_read_parameters(
             pba->y_phi_ini_scf = 3.*sin(pba->theta_phi_ini_scf);
         }
         else{
-            k1_phi = 1.5
+            k1_phi = 1.5*(1. + pow(1.+2*pba->scf_parameters[1]/9.,0.5));
+            k2_phi = k1_phi*pba->scf_parameters[2]/(6.*(k1_phi-2.));
+            k3_phi = 0.25 - 2.*k2_phi*k2_phi/k1_phi + (6.*k1_phi*k1_phi*pba->scf_parameters[3]-pba->scf_parameters[1]+
+                                                       6.*k2_phi*pba->scf_parameters[2])/(12.*k1_phi);
             theta0_phi = pow(10.,pba->scf_parameters[0]);
+            //printf(" -> k1 = %1.2g, k2 = %1.2g, k3 = %1.2g\n",k1_phi,k2_phi,k3_phi);
+            //printf(" -> y1 = %1.2g\n",k1_phi*theta0_phi+k2_phi*pow(theta0_phi,2.)+k3_phi*pow(theta0_phi,3.));
             pba->Omega_phi_ini_scf = pba->scf_parameters[pba->scf_tuning_index]+
             log(1.e-56*pba->Omega0_scf*(pba->Omega0_cdm+pba->Omega0_b)/(pba->Omega0_g+pba->Omega0_ur));
-            pba->theta_phi_ini_scf = 0.9*1.e-28*pow(pba->Omega0_scf/(pba->Omega0_g+pba->Omega0_ur),0.5)*theta0_phi
-            /pow(1.+(2.*k3_phi+1.)*log(pba->Omega0_scf/(pba->Omega0_cdm+pba->Omega0_b))*pow(theta0_phi,2.0)/3.,0.5);
+            pba->theta_phi_ini_scf = theta0_phi/pow(1.+2.*log(pba->Omega0_scf/(pba->Omega0_cdm+pba->Omega0_b))
+                                                    *(k1_phi-3.+(k3_phi+0.5)*pow(theta0_phi,2.0))/3.,0.5);
+            pba->theta_phi_ini_scf = 0.9*1.e-28*pow(pba->Omega0_scf/(pba->Omega0_g+pba->Omega0_ur),0.5)*pba->theta_phi_ini_scf;
             pba->y_phi_ini_scf = 5.*pba->theta_phi_ini_scf;//pow(10.,pba->scf_parameters[0])*1.e-28/pow(pba->Omega0_g+pba->Omega0_ur,0.5);
         }
 
