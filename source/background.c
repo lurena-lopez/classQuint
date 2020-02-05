@@ -1654,12 +1654,15 @@ int background_solve(
       printf(" Quintessence field details:\n");
       printf(" -> Omega_scf = %g, wished = %g\n",
 	     exp(pvecback[pba->index_bg_Omega_phi_scf]), pba->Omega0_scf);
-      printf(" -> w_phi = %1.2e, wished =%1.2e\n",
-               -cos(pvecback[pba->index_bg_theta_phi_scf]), -cos(pow(10.,pba->scf_parameters[0])));
+      printf(" -> theta_phi = %1.2e, wished =%1.2e\n",
+               pvecback[pba->index_bg_theta_phi_scf], pba->scf_parameters[0]);
       printf(" -> 1+w_phi = %1.2e, wished = %1.2e\n",
-             1.-cos(pvecback[pba->index_bg_theta_phi_scf]),1.-cos(pow(10.,pba->scf_parameters[0])));
+             1.-cos(pvecback[pba->index_bg_theta_phi_scf]),1.-cos(pba->scf_parameters[0]));
       printf(" -> Mass_sfdm = %1.2e [eV], %1.2e [1/Mpc], %1.2e [H_0]\n",
-      3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]);
+      3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H],
+             0.5*pvecback[pba->index_bg_y_phi_scf]);
+      printf(" -> alpha_0 = %g, alpha_1 =%g, alpha_2 =%g\n",
+        pba->scf_parameters[1],pba->scf_parameters[2],pba->scf_parameters[3]);
     }
     if(pba->has_lambda == _TRUE_){
       printf(" Lambda details:\n");
