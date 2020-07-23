@@ -465,17 +465,6 @@ extern "C" {
 			 );
 
   /** Scalar field variables. See background.c for more details. */
-/**  double w_phi_scf(struct background *pba,
-		   double theta
-		   );**/
-  
-  double cos_scf(struct background *pba,
-		 double theta_phi
-		 );
-  
-  double sin_scf(struct background *pba,
-		 double theta_phi
-		 );
   
   double y2_phi_scf(struct background *pba,
 		    double Omega_phi,

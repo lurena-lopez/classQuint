@@ -18,7 +18,7 @@ vpath .base build
 
 # your C compiler:
 #CC       = cc
-CC       = gcc-9
+CC       = gcc-10
 #CC       = icc
 #CC       = pgcc
 

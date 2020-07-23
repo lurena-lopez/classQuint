@@ -398,7 +398,7 @@ int background_functions(
     pvecback[pba->index_bg_theta_phi_scf] = theta_phi; // value of the scalar field theta_phi
     pvecback[pba->index_bg_y_phi_scf] = y1_phi; // value of the scalar field y1_phi
     pvecback[pba->index_bg_rho_scf] = exp(Omega_phi)*rho_tot/(1.-exp(Omega_phi)); // energy of the scalar field
-    pvecback[pba->index_bg_p_scf] = -cos_scf(pba,theta_phi)*pvecback[pba->index_bg_rho_scf];// pressure of the scalar field
+    pvecback[pba->index_bg_p_scf] = -cosh(theta_phi)*pvecback[pba->index_bg_rho_scf];// pressure of the scalar field
     //rho_m += pvecback[pba->index_bg_rho_scf]; // add scalar field energy density into the total matter budget
     rho_tot += pvecback[pba->index_bg_rho_scf]; // add scalar field density to the total one
     p_tot += pvecback[pba->index_bg_p_scf]; // add scalar field pressure to the total one
@@ -1651,13 +1651,13 @@ int background_solve(
     printf(" -> age = %f Gyr\n",pba->age);
     printf(" -> conformal age = %f Mpc\n",pba->conformal_age);
     if (pba->has_scf == _TRUE_){
-      printf(" Quintessence field details:\n");
+      printf(" Phantom field details:\n");
       printf(" -> Omega_scf = %g, wished = %g\n",
 	     exp(pvecback[pba->index_bg_Omega_phi_scf]), pba->Omega0_scf);
-      printf(" -> theta_phi = %1.2e, wished =%1.2e\n",
-               pvecback[pba->index_bg_theta_phi_scf], pba->scf_parameters[0]);
+      /*printf(" -> theta_phi = %1.2e, wished =%1.2e\n",
+               pvecback[pba->index_bg_theta_phi_scf], pba->scf_parameters[0]);*/
       printf(" -> 1+w_phi = %1.2e, wished = %1.2e\n",
-             1.-cos(pvecback[pba->index_bg_theta_phi_scf]),1.-cos(pba->scf_parameters[0]));
+             1.-cosh(pvecback[pba->index_bg_theta_phi_scf]),1.-cosh(pba->scf_parameters[0]));
       printf(" -> Mass_sfdm = %1.2e [eV], %1.2e [1/Mpc], %1.2e [H_0]\n",
       3.19696e-30*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H], 0.5*pvecback[pba->index_bg_y_phi_scf]*pvecback[pba->index_bg_H],
              0.5*pvecback[pba->index_bg_y_phi_scf]);
@@ -2050,16 +2050,15 @@ int background_derivs(
 
   if (pba->has_scf == _TRUE_){
     dy[pba->index_bi_Omega_phi_scf] = 3.*y[pba->index_bi_a]*pvecback[pba->index_bg_H]*
-      (pvecback[pba->index_bg_w_tot]+cos_scf(pba,y[pba->index_bi_theta_phi_scf]));
+      (pvecback[pba->index_bg_w_tot]+cosh(y[pba->index_bi_theta_phi_scf]));
       
-    dy[pba->index_bi_theta_phi_scf] = y[pba->index_bi_a]*pvecback[pba->index_bg_H]*
-      (-3.*sin_scf(pba,y[pba->index_bi_theta_phi_scf])+y[pba->index_bi_y_phi_scf]);
+    dy[pba->index_bi_theta_phi_scf] = -y[pba->index_bi_a]*pvecback[pba->index_bg_H]*
+      (3.*sinh(y[pba->index_bi_theta_phi_scf])+y[pba->index_bi_y_phi_scf]);
       
     dy[pba->index_bi_y_phi_scf] = y[pba->index_bi_a]*pvecback[pba->index_bg_H]*
       (1.5*(1.+pvecback[pba->index_bg_w_tot])*y[pba->index_bi_y_phi_scf]
        + y2_phi_scf(pba,y[pba->index_bi_Omega_phi_scf],y[pba->index_bi_theta_phi_scf],y[pba->index_bi_y_phi_scf]));
-//       exp(0.5*y[pba->index_bi_Omega_phi_scf])*sin_scf(pba,0.5*y[pba->index_bi_theta_phi_scf]));
-              //+pba->scf_parameters[3]*tan(0.5*y[pba->index_bi_theta_phi_scf])*pow(y[pba->index_bi_y_phi_scf],2.));
+       //exp(0.5*y[pba->index_bi_Omega_phi_scf])*sinh(0.5*y[pba->index_bi_theta_phi_scf]));
   }
 
 
@@ -2073,23 +2072,6 @@ int background_derivs(
  * - Generalize to Kessence/Horndeski/PPF and/or couplings
  */
 
-/** Cosine and sine modified functions to kill oscillations with a very high frequency */
-double cos_scf(struct background *pba,
-		 double theta_phi
-		 ) {
-  double theta_thresh = 1.e2;
-    double theta_tol = 1.;//1.e-2;
-  return 0.5*(1.-tanh(theta_tol*(theta_phi*theta_phi-theta_thresh*theta_thresh)))*cos(theta_phi);
-}
-
-double sin_scf(struct background *pba,
-		 double theta_phi
-		 ) {
-  double theta_thresh = 1.e2;
-    double theta_tol = 1.;//1.e-2;
-  return 0.5*(1.-tanh(theta_tol*(theta_phi*theta_phi-theta_thresh*theta_thresh)))*sin(theta_phi);
-}
-
 /** Second potential variable y2 for scalar field */
 double y2_phi_scf(struct background *pba,
 		  double Omega_phi,
@@ -2099,14 +2081,9 @@ double y2_phi_scf(struct background *pba,
   double scf_alpha0 = pba->scf_parameters[1];
   double scf_alpha1 = pba->scf_parameters[2];
   double scf_alpha2 = pba->scf_parameters[3];
-  //General expression for quintessence potentials
-    if (fabs(cos(theta)) > 1.e-3){
-        return 0.5*scf_alpha0*exp(Omega_phi)*sin_scf(pba,theta) +
-        scf_alpha1*exp(0.5*Omega_phi)*sin_scf(pba,0.5*theta)*y1_phi +
-        scf_alpha2*sin_scf(pba,0.5*theta)*pow(y1_phi,2.)/cos_scf(pba,0.5*theta);
-    }
-    else{
-        return 0.5*scf_alpha0*exp(Omega_phi)*sin_scf(pba,theta) +
-        scf_alpha1*exp(0.5*Omega_phi)*sin_scf(pba,0.5*theta)*y1_phi;
-    }
+  
+  //General expression for phantom potentials
+  return 0.5*scf_alpha0*exp(Omega_phi)*sinh(theta) +
+    scf_alpha1*exp(0.5*Omega_phi)*sinh(0.5*theta)*y1_phi +
+    scf_alpha2*sinh(0.5*theta)*pow(y1_phi,2.)/cosh(0.5*theta);
 }
